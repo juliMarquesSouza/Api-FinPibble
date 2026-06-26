@@ -6,7 +6,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
-const { PrismaClient } = require("../generated/prisma");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
 
 const app = express();
@@ -14,10 +16,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "finpibble-dev-secret";
 
 const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL || "file:./dev.db",
-});
-
-const prisma = new PrismaClient({
-  adapter,
 });
 
 app.use(cors());
