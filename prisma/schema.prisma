@@ -20,4 +20,54 @@ model Account {
   color      String?
   icon       String? 
   createdAt  DateTime  @default(now())
+  userId     Int?
+  user       User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  password    String
+  createdAt   DateTime  @default(now())
+  accounts    Account[]
+  goals       Goal[]
+  transactions Transaction[]
+  resetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  description String
+  amount      Float
+  category    String
+  date        DateTime @default(now())
+  type        String
+  accountId   Int
+  userId      Int
+  createdAt   DateTime @default(now())
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Goal {
+  id        Int      @id @default(autoincrement())
+  title     String
+  saved     Float    @default(0)
+  target    Float
+  color     String?
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
