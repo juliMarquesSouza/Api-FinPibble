@@ -7,16 +7,20 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { PrismaBetterSQLite3 } = require('@prisma/adapter-better-sqlite3');
+
+const adapter = new PrismaBetterSQLite3({
+  url: process.env.DATABASE_URL || 'file:./dev.db',
+});
+
+const prisma = new PrismaClient({ adapter });
 
 const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || "finpibble-dev-secret";
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL || "file:./dev.db",
-});
+
 
 app.use(cors());
 app.use(express.json());
