@@ -576,6 +576,8 @@ app.use((error, req, res, _next) => {
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`FinPibble API listening on port ${PORT}`);
-});
+// app.listen(PORT, "0.0.0.0", () => {
+//   console.log(`FinPibble API listening on port ${PORT}`);
+// });
+app.listen(3333, () => {
+  console.log("API rodando em http://localhost:3333");})
