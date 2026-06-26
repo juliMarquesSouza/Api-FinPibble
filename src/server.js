@@ -73,6 +73,20 @@ function getMonthRange(date = new Date()) {
   return { start, end };
 }
 
+function parseTransactionDate(value) {
+  if (!value) {
+    return new Date();
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day, 12);
+  }
+
+  const parsedDate = new Date(value);
+  return Number.isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+}
+
 app.get("/", (req, res) => {
   res.json({ message: "API FinPibble rodando" });
 });
@@ -321,7 +335,7 @@ app.post("/transactions", authRequired, asyncHandler(async (req, res) => {
   }
 
   const signedAmount = type === "income" ? parsedAmount : -parsedAmount;
-  const transactionDate = date ? new Date(date) : new Date();
+  const transactionDate = parseTransactionDate(date);
 
   const [transaction] = await prisma.$transaction([
     prisma.transaction.create({
@@ -329,7 +343,7 @@ app.post("/transactions", authRequired, asyncHandler(async (req, res) => {
         description: description || title,
         amount: signedAmount,
         category: category || "Geral",
-        date: Number.isNaN(transactionDate.getTime()) ? new Date() : transactionDate,
+        date: transactionDate,
         type,
         accountId: account.id,
         userId: req.user.id,
@@ -380,7 +394,7 @@ app.put("/transactions/:id", authRequired, asyncHandler(async (req, res) => {
   }
 
   const signedAmount = type === "income" ? parsedAmount : -parsedAmount;
-  const transactionDate = date ? new Date(date) : new Date();
+  const transactionDate = parseTransactionDate(date);
   const accountBalanceUpdates = [
     prisma.account.update({
       where: { id: transaction.accountId },
@@ -399,7 +413,7 @@ app.put("/transactions/:id", authRequired, asyncHandler(async (req, res) => {
         description: description || title,
         amount: signedAmount,
         category: category || "Geral",
-        date: Number.isNaN(transactionDate.getTime()) ? new Date() : transactionDate,
+        date: transactionDate,
         type,
         accountId: account.id,
       },
