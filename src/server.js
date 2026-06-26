@@ -15,8 +15,6 @@ const adapter = new PrismaBetterSqlite3({
 
 const prisma = new PrismaClient({ adapter });
 
-const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
-
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || "finpibble-dev-secret";
 
